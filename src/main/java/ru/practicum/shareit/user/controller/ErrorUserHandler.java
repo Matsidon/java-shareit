@@ -14,6 +14,7 @@ public class ErrorUserHandler {
     public ErrorUserResponse handlerConflictException(final UserConflictException e) {
         return new ErrorUserResponse(e.getMessage());
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorUserResponse handlerValidationException(final UserValidationException e) {

@@ -36,8 +36,8 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto createItem(ItemDto itemDto, long userId) {
         userService.checkUserExists(userId);
         User user = userRepository.getUser(userId);
-        Item item = itemMapper.ToItem(itemDto, user);
-        return itemMapper.ToItemDto(itemRepository.createItem(item));
+        Item item = itemMapper.toItem(itemDto, user);
+        return itemMapper.toItemDto(itemRepository.createItem(item));
     }
 
     @Override
@@ -55,13 +55,13 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getAvailable() != null) {
             item.setAvailable(itemDto.getAvailable());
         }
-        return itemMapper.ToItemDto(itemRepository.updateItem(item));
+        return itemMapper.toItemDto(itemRepository.updateItem(item));
     }
 
     @Override
     public ItemDto getItem(long itemId) {
         checkItemExists(itemId);
-        return itemMapper.ToItemDto(itemRepository.getItem(itemId));
+        return itemMapper.toItemDto(itemRepository.getItem(itemId));
     }
 
     @Override
@@ -69,13 +69,13 @@ public class ItemServiceImpl implements ItemService {
         userService.checkUserExists(userId);
         List<ItemDto> itemDtoList = new ArrayList<>();
         for (Item item : itemRepository.getAllItemsByUser(userId)) {
-            itemDtoList.add(itemMapper.ToItemDto(item));
+            itemDtoList.add(itemMapper.toItemDto(item));
         }
         return itemDtoList;
     }
 
     private List<ItemDto> getAllItems() {
-        return itemRepository.getAllItems().stream().map(itemMapper::ToItemDto).collect(Collectors.toList());
+        return itemRepository.getAllItems().stream().map(itemMapper::toItemDto).collect(Collectors.toList());
     }
 
     @Override

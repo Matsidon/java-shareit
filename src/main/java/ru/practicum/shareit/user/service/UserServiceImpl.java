@@ -27,8 +27,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(UserDto userDto) {
         validateEmailUser(userDto);
-        User user = userMapper.ToUser(userDto);
-        return userMapper.ToUserDto(userRepository.createUser(user));
+        User user = userMapper.toUser(userDto);
+        return userMapper.toUserDto(userRepository.createUser(user));
     }
 
     @Override
@@ -42,26 +42,26 @@ public class UserServiceImpl implements UserService {
             validateEmailUser(userDto);
             user.setEmail(userDto.getEmail());
         }
-        return userMapper.ToUserDto(userRepository.updateUser(userId, user));
+        return userMapper.toUserDto(userRepository.updateUser(userId, user));
     }
 
     @Override
     public UserDto getUser(long userId) {
         checkUserExists(userId);
-        return userMapper.ToUserDto(userRepository.getUser(userId));
+        return userMapper.toUserDto(userRepository.getUser(userId));
     }
 
     @Override
     public UserDto removeUser(long userId) {
         checkUserExists(userId);
-        return userMapper.ToUserDto(userRepository.removeUser(userId));
+        return userMapper.toUserDto(userRepository.removeUser(userId));
     }
 
     @Override
     public List<UserDto> getAllUsers() {
         List<UserDto> userDtoList = new ArrayList<>();
         for (User user : userRepository.getAllUsers()) {
-            userDtoList.add(userMapper.ToUserDto(user));
+            userDtoList.add(userMapper.toUserDto(user));
         }
         return userDtoList;
     }

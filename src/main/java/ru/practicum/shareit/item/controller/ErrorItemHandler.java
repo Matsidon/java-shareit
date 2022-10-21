@@ -15,6 +15,7 @@ public class ErrorItemHandler {
     public ErrorUserResponse handlerUpdateException(final ItemUpdateException e) {
         return new ErrorUserResponse(e.getMessage());
     }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorUserResponse handlerExistsException(final UserExistsException e) {
