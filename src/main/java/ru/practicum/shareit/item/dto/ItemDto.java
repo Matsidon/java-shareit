@@ -6,14 +6,12 @@ import ru.practicum.shareit.user.Create;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-/**
- * TODO Sprint add-controllers.
- */
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode(of = "id")
+@ToString
 public class ItemDto {
     private long id;
     @NotNull(groups = Create.class)
