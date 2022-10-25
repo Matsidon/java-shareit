@@ -30,8 +30,9 @@ public class UserServiceImpl implements UserService {
     public UserDto createUser(UserDto userDto) {
         validateEmailUser(userDto);
         User user = userMapper.toUser(userDto);
-        log.info("Создан пользователь: {}", userDto);
-        return userMapper.toUserDto(userRepository.createUser(user));
+        UserDto userDtoCreate = userMapper.toUserDto(userRepository.createUser(user));
+        log.info("Создан пользователь: {}", userDtoCreate);
+        return userDtoCreate;
     }
 
     @Override
@@ -45,22 +46,25 @@ public class UserServiceImpl implements UserService {
             validateEmailUser(userDto);
             user.setEmail(userDto.getEmail());
         }
-        log.info("Обновлен пользователь: {}", userDto);
-        return userMapper.toUserDto(userRepository.updateUser(userId, user));
+        UserDto userDtoUpdate = userMapper.toUserDto(userRepository.updateUser(userId, user));
+        log.info("Обновлен пользователь: {}", userDtoUpdate);
+        return userDtoUpdate;
     }
 
     @Override
     public UserDto getUser(long userId) {
         checkUserExists(userId);
-        log.info("Получен пользователь: {}", userId);
-        return userMapper.toUserDto(userRepository.getUser(userId));
+        UserDto userDto = userMapper.toUserDto(userRepository.getUser(userId));
+        log.info("Получен пользователь: {}", userDto.getId());
+        return userDto;
     }
 
     @Override
     public UserDto removeUser(long userId) {
         checkUserExists(userId);
-        log.info("Удалён пользователь: {}", userId);
-        return userMapper.toUserDto(userRepository.removeUser(userId));
+        UserDto userDto = userMapper.toUserDto(userRepository.removeUser(userId));
+        log.info("Удалён пользователь: {}", userDto.getId());
+        return userDto;
     }
 
     @Override
@@ -76,22 +80,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public void checkUserExists(long userId) {
         if (userRepository.getUser(userId) == null) {
-            log.info("Пользователя с id = {} нет", userId);
+            log.error("Пользователя с id = {} нет", userId);
             throw new UserExistsException("Пользователя с id = " + userId + "нет");
         }
     }
 
     private void validateEmailUser(UserDto userDto) {
         if (!userDto.getEmail().contains("@")) {
-            log.info("Некорректное значение поля email = {}", userDto.getEmail());
+            log.error("Некорректное значение поля email = {}", userDto.getEmail());
             throw new UserValidationException("Некорректное значение поля email = " + userDto.getEmail());
         }
-        List<String> emails = new ArrayList<>();
+        List<String> emailsUserList = new ArrayList<>();
         for (UserDto userDto1 : getAllUsers()) {
-            emails.add(userDto1.getEmail());
+            emailsUserList.add(userDto1.getEmail());
         }
-        if (emails.contains(userDto.getEmail())) {
-            log.info("Пользователь с полем email = {} уже существует", userDto.getEmail());
+        if (emailsUserList.contains(userDto.getEmail())) {
+            log.error("Пользователь с полем email = {} уже существует", userDto.getEmail());
             throw new UserConflictException("Пользователь с полем email = " + userDto.getEmail() + " уже существует");
         }
     }

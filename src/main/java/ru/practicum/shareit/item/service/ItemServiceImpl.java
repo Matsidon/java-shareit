@@ -40,8 +40,9 @@ public class ItemServiceImpl implements ItemService {
         userService.checkUserExists(userId);
         User user = userRepository.getUser(userId);
         Item item = itemMapper.toItem(itemDto, user);
-        log.info("Создана вещь: {} пользователя с id = {}", itemDto, userId);
-        return itemMapper.toItemDto(itemRepository.createItem(item));
+        ItemDto itemDtoCreate = itemMapper.toItemDto(itemRepository.createItem(item));
+        log.info("Создана вещь: {} пользователя с id = {}", itemDtoCreate, userId);
+        return itemDtoCreate;
     }
 
     @Override
@@ -59,15 +60,17 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getAvailable() != null) {
             item.setAvailable(itemDto.getAvailable());
         }
-        log.info("Обновлена вещь: {} пользователя с id = {}", itemDto, userId);
-        return itemMapper.toItemDto(itemRepository.updateItem(item));
+        ItemDto itemDtoUpdate = itemMapper.toItemDto(itemRepository.updateItem(item));
+        log.info("Обновлена вещь: {} пользователя с id = {}", itemDtoUpdate, userId);
+        return itemDtoUpdate;
     }
 
     @Override
     public ItemDto getItem(long itemId) {
         checkItemExists(itemId);
-        log.info("Получена вещь с id = {}", itemId);
-        return itemMapper.toItemDto(itemRepository.getItem(itemId));
+        ItemDto itemDto = itemMapper.toItemDto(itemRepository.getItem(itemId));
+        log.info("Получена вещь с id = {}", itemDto.getId());
+        return itemDto;
     }
 
     @Override
@@ -82,8 +85,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private List<ItemDto> getAllItems() {
-        log.info("Получен список всех вещей");
-        return itemRepository.getAllItems().stream().map(itemMapper::toItemDto).collect(Collectors.toList());
+        List<ItemDto> itemDtoList = itemRepository.getAllItems().stream()
+                .map(itemMapper::toItemDto)
+                .collect(Collectors.toList());
+        log.info("Получен список всех вещей, size = {}", itemDtoList.size());
+        return itemDtoList;
     }
 
     @Override
@@ -106,7 +112,7 @@ public class ItemServiceImpl implements ItemService {
 
     private void checkItemExists(long itemId) {
         if (itemRepository.getItem(itemId) == null) {
-            log.info("Вещь с id = {} не существует", itemId);
+            log.error("Вещь с id = {} не существует", itemId);
             throw new ItemUpdateException("Вещь с id = " + itemId + " не существует");
         }
     }
@@ -117,7 +123,7 @@ public class ItemServiceImpl implements ItemService {
                 .collect(Collectors.toList())
                 .size();
         if (sizeList == 0) {
-            log.info("Вещь с id = {} не существует для пользователя с id = {}", itemId, userId);
+            log.error("Вещь с id = {} не существует для пользователя с id = {}", itemId, userId);
             throw new ItemUpdateException("Вещь с id = " + itemId + " не существует для пользователя с id = " + userId);
         }
     }
